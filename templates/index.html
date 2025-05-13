@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>文档智能管理系统</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f6f9;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 30px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+    }
+
+    .card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      padding: 25px;
+      margin-bottom: 30px;
+      transition: transform 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 1.5em;
+      color: #2c3e50;
+      border-left: 5px solid #3498db;
+      padding-left: 10px;
+      margin-bottom: 15px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    input[type="file"],
+    input[type="text"] {
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1em;
+    }
+
+    button {
+      padding: 12px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #ecf7ff;
+      border-left: 4px solid #3498db;
+      border-radius: 6px;
+      white-space: pre-wrap;
+      font-size: 0.95em;
+      line-height: 1.5;
+    }
+
+    .error {
+      margin-top: 10px;
+      padding: 12px;
+      background-color: #ffeaea;
+      border-left: 4px solid #e74c3c;
+      color: #d63031;
+      border-radius: 6px;
+      font-size: 0.95em;
+    }
+
+    @media (max-width: 600px) {
+      .card {
+        padding: 20px;
+      }
+
+      input[type="text"] {
+        font-size: 0.95em;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>📄 文档智能管理系统</h1>
+
+  <!-- 文件上传模块 -->
+  <div class="card">
+    <h2>上传文件</h2>
+    <form id="uploadForm" enctype="multipart/form-data">
+      <input type="file" name="file" required />
+      <button type="submit">上传并生成摘要</button>
+    </form>
+    <div id="uploadResult" class="result" style="display: none;"></div>
+    <div id="uploadError" class="error" style="display: none;"></div>
+  </div>
+
+  <!-- 提问问答模块 -->
+  <div class="card">
+    <h2>提出问题</h2>
+    <form id="askForm">
+      <input type="text" id="questionInput" placeholder="输入您的问题..." required />
+      <button type="submit">获取答案</button>
+    </form>
+    <div id="askResult" class="result" style="display: none;"></div>
+    <div id="askError" class="error" style="display: none;"></div>
+  </div>
+</div>
+
+<script>
+  // 处理文件上传
+  document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const fileInput = document.querySelector('input[type="file"]');
+    const resultDiv = document.getElementById('uploadResult');
+    const errorDiv = document.getElementById('uploadError');
+
+    if (!fileInput.files.length) {
+      errorDiv.textContent = '请选择要上传的文件';
+      errorDiv.style.display = 'block';
+      resultDiv.style.display = 'none';
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+
+    try {
+      const response = await fetch('/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await response.json();
+
+      if (data.error) {
+        errorDiv.textContent = data.error;
+        errorDiv.style.display = 'block';
+        resultDiv.style.display = 'none';
+      } else {
+        resultDiv.innerHTML = `📁 文件名：${data.filename}\n📝 摘要：${data.summary}`;
+        resultDiv.style.display = 'block';
+        errorDiv.style.display = 'none';
+        fileInput.value = '';
+      }
+    } catch (err) {
+      errorDiv.textContent = '上传出错：' + err.message;
+      errorDiv.style.display = 'block';
+      resultDiv.style.display = 'none';
+    }
+  });
+
+  // 处理提问请求
+  document.getElementById('askForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const questionInput = document.getElementById('questionInput');
+    const resultDiv = document.getElementById('askResult');
+    const errorDiv = document.getElementById('askError');
+
+    const question = questionInput.value.trim();
+    if (!question) {
+      errorDiv.textContent = '请输入问题';
+      errorDiv.style.display = 'block';
+      resultDiv.style.display = 'none';
+      return;
+    }
+
+    try {
+      const response = await fetch('/ask', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ question })
+      });
+
+      const data = await response.json();
+
+      if (data.error) {
+        errorDiv.textContent = data.error;
+        errorDiv.style.display = 'block';
+        resultDiv.style.display = 'none';
+      } else {
+        resultDiv.innerHTML = `📎 相关文件：${data.relevant_file}\n💬 答案：${data.answer}`;
+        resultDiv.style.display = 'block';
+        errorDiv.style.display = 'none';
+        questionInput.value = '';
+      }
+    } catch (err) {
+      errorDiv.textContent = '请求出错：' + err.message;
+      errorDiv.style.display = 'block';
+      resultDiv.style.display = 'none';
+    }
+  });
+</script>
+</body>
+</html>
