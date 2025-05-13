@@ -1,6 +1,6 @@
 # [NoVectorRAG]
 
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT) 一个独特的检索增强生成 (RAG) 系统，它完全**不依赖传统的向量数据库或关键词索引**进行信息检索，而是贯穿使用大型语言模型 (LLM) 来实现智能分块和直接的相关性判断。
+[![License](https://img.shields.io/badge/License-GPL_v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) 一个独特的检索增强生成 (RAG) 系统，它完全**不依赖传统的向量数据库或关键词索引**进行信息检索，而是贯穿使用大型语言模型 (LLM) 来实现智能分块和直接的相关性判断。
 
 ## ✨ 项目简介 (Introduction)
 
