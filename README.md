@@ -1,71 +1,71 @@
 # [NoVectorRAG]
 
-一个独特的检索增强生成 (RAG) 系统，它完全**不依赖传统的向量数据库或关键词索引**进行信息检索，而是贯穿使用大型语言模型 (LLM) 来实现智能分块和直接的相关性判断。
+A unique Retrieval-Augmented Generation (RAG) system that completely **avoids relying on traditional vector databases or keyword indexing** for information retrieval. Instead, it exclusively uses Large Language Models (LLMs) to achieve intelligent chunking and direct relevance judgment.
 
-# 🎉 LLM-Native RAG: 告别向量数据库，探索基于大模型驱动检索的新型 RAG 方案
+# 🎉 LLM-Native RAG: Say Goodbye to Vector Databases, Explore a Novel LLM-Driven Retrieval Solution
 
-## ✨ 项目简介 (Introduction)
+## ✨ Project Introduction
 
-在构建能理解并回答长文档内容的应用时，检索增强生成 (RAG) 是一个核心且有效的技术框架。**传统的 RAG 方案**是这样工作的：
+In building applications that understand and answer questions based on long documents, Retrieval-Augmented Generation (RAG) is a critical and effective technical framework. **Traditional RAG solutions** work as follows:
 
-1.  将长文档切分成小块 (Chunks)。
-2.  利用 **向量嵌入 (Embedding)** 模型将每个文本块转换成**高维向量**。
-3.  将这些向量及对应的文本块存储到专门的 **向量数据库 (Vector Database)** 中。
-4.  当用户提问时，也将问题转换成向量，然后在向量数据库中进行**向量相似度搜索**，找出与问题向量最相似（即语义上最接近）的文本块。
-5.  最后，将检索到的少量相关文本块与用户问题一同发送给大型语言模型 (LLM)，生成最终回答。
+1.  Long documents are split into small **Chunks**.
+2.  **Vector Embedding** models convert each text chunk into a **high-dimensional vector**.
+3.  These vectors and their corresponding text chunks are stored in a specialized **Vector Database**.
+4.  When a user asks a question, the question is also converted into a vector, and a **vector similarity search** is performed in the database to find the text chunks most similar (i.e., semantically closest) to the query vector.
+5.  Finally, the retrieved relevant text snippets are sent along with the user's question to the Large Language Model (LLM) to generate the final answer.
 
-**本项目 LLM-Native RAG** 走了一条**完全不同的技术路线**。我们 **彻底移除了上述流程中的 [向量嵌入] 和 [向量数据库] 这两个核心组件**。取而代之的是，我们**最大化地依赖 LLM 自身强大的语言理解、推理和判断能力**来直接完成**文档检索**这一关键任务。
+The **LLM-Native RAG project** takes a **completely different technical route**. We have **completely removed the [Vector Embedding] and [Vector Database] components** from the above process. Instead, we **maximize our reliance on the LLM's own powerful language understanding, reasoning, and judgment capabilities** to directly perform the critical task of **document retrieval**.
 
-**项目的核心价值在于：**
+**The core value of this project lies in:**
 
-* **技术栈极简：** 你**无需部署、配置和维护复杂的向量数据库**。项目的核心技术栈完全围绕 LLM API 构建。
-* **检索智能化：** 将文本相关性判断这一任务交由 LLM 以其天然的语义理解能力直接完成，而非依赖向量空间的距离计算。
-* **降低部署复杂度：** 特别适合希望快速搭建 RAG 应用，同时避免引入新的基础设施依赖（如向量数据库）的场景。
-* **探索新范式：** 提供了一种不同于主流向量 RAG 的创新性实现，探索 LLM 在 RAG 流程中更深度的参与方式。
+* **Minimalist Tech Stack:** You **do not need to deploy, configure, or maintain a complex vector database**. The project's core stack is built entirely around LLM APIs.
+* **Intelligent Retrieval:** The task of determining text relevance is handled directly by the LLM using its native semantic understanding, rather than relying on distance calculations in vector space.
+* **Reduced Deployment Complexity:** Particularly suitable for scenarios where rapid RAG application setup is desired while avoiding the introduction of new infrastructure dependencies (like vector databases).
+* **Exploring a New Paradigm:** Provides an innovative implementation that differs from mainstream vector RAG, exploring a deeper involvement of the LLM in the RAG process.
 
-## 🚀 核心理念与独特流程 (Core Idea & Unique Workflow)
+## 🚀 Core Idea & Unique Workflow
 
-本项目区别于标准向量 RAG 的最核心之处在于**检索环节的实现方式**。其端到端流程如下：
+The most significant difference between this project and standard vector RAG lies in **how the retrieval step is implemented**. The end-to-end workflow is as follows:
 
-1.  **📄 智能语义分块 (Intelligent Semantic Chunking):**
-    * 利用 LLM 的语言理解能力，对原始长文档进行**智能化、基于语义的分块**，确保每个块包含更完整的上下文和逻辑单元。这第一步与传统 RAG 类似，但侧重于 LLM 驱动的分块质量。
+1.  **📄 Intelligent Semantic Chunking:**
+    * Leverage the LLM's language understanding to perform **intelligent, semantics-based splitting** of the original long document, ensuring each chunk contains a more complete context and logical unit. This first step is similar to traditional RAG, but emphasizes LLM-driven chunk quality.
 
-2.  **📑 生成分块摘要 (Generate Chunk Summaries):**
-    * 调用 LLM 为每个智能分块的文本内容生成**简洁且能代表其核心内容的摘要**。这些摘要是本方案中用于检索判断的“索引”或“语义目录”。
+2.  **📑 Generate Chunk Summaries:**
+    * Call the LLM to generate a **concise summary** for the text content of each intelligent chunk that effectively represents its core content. These summaries serve as the "index" or "semantic directory" for retrieval judgment in this solution.
 
-3.  **🔎 LLM 驱动的检索判断与评分 (LLM-Driven Retrieval Judgment & Scoring):**
-    * 这是本项目**替代传统向量检索**的关键环节。当接收到用户查询时：
-        * 系统将**用户的问题**与**所有分块的摘要列表**（为了适应 LLM 的上下文窗口，这个列表会被智能地分成若干批次）一同发送给 LLM。
-        * LLM 被明确指示**阅读用户问题和它接收到的那批摘要列表**，并根据其理解判断每个摘要与用户查询的**相关程度**，并给出对应的**评分**（例如，在一个预设的数值范围内，如 1 到 10 分）。
-        * 系统收集所有批次的处理结果和评分，并对所有摘要根据评分进行**全局排序和过滤**。最终选出得分最高（即 LLM 认为最相关）的若干个摘要。
-    * **这一过程完全由 LLM 的阅读理解和判断能力完成，不涉及向量计算和数据库查询。**
+3.  **🔎 LLM-Driven Retrieval Judgment & Scoring:**
+    * This is the **key step that replaces traditional vector retrieval**. When a user query is received:
+        * The system sends the **user's question** along with a **list of all chunk summaries** (intelligently batched to fit the LLM's context window) to the LLM.
+        * The LLM is explicitly instructed to **read the user question and the batch of summaries it received**, judge the **relevance** of each summary to the user query based on its understanding, and assign a corresponding **score** (e.g., within a predefined numerical range, such as 1 to 10).
+        * The system collects the results and scores from all batches, performs a **global sorting and filtering** of all summaries based on the scores. It finally selects the summaries with the highest scores (i.e., those the LLM deems most relevant).
+    * **This entire process is performed exclusively by the LLM's reading comprehension and judgment capabilities, involving no vector computation or database querying.**
 
-4.  **🔗 关联并提取原文 (Retrieve Original Content):**
-    * 根据在步骤 3 中 LLM 选出的**相关摘要**，通过项目内部维护的**摘要与原始分块的映射关系**，精准地提取出这些摘要对应的原始文档分块的完整文本内容。
+4.  **🔗 Associate and Retrieve Original Content:**
+    * Based on the **relevant summaries** selected by the LLM in Step 3, the system uses the internal **mapping relationship between summaries and original chunks** to precisely extract the full text content of the corresponding original document chunks.
 
-5.  **🗣️ 基于事实的最终回答生成 (Grounded LLM Generation):**
-    * 将**用户原始的查询**和在步骤 4 中检索到的**少数高质量相关原文片段**一同发送给最终的 LLM。
-    * LLM 严格基于提供的原文信息来生成最终的回答，确保答案的**准确性、可靠性**和**流畅性**，有效**避免幻觉**，让回答有据可查。
+5.  **🗣️ Grounded Final Answer Generation:**
+    * The **original user query** and the **few high-quality relevant snippets** retrieved in Step 4 are sent together to the final LLM.
+    * The LLM strictly generates the final answer based on the provided source information, ensuring the answer's **accuracy, reliability**, and **fluency**, effectively **preventing hallucination** and grounding the response in facts.
 
-## 🚧 权衡与适用场景 (Trade-offs and Applicable Scenarios)
+## 🚧 Trade-offs and Applicable Scenarios
 
-本项目在移除向量数据库、简化技术栈的同时，也带来了与传统向量 RAG 不同的权衡点：
+While removing the vector database and simplifying the tech stack, this project also introduces different trade-offs compared to traditional vector RAG:
 
-* **大规模扩展性挑战：** 在处理海量文档集合（远超 LLM 单次处理能力的摘要列表规模）时，通过多次 LLM 调用进行检索判断，其整体扩展性通常不如高度优化的分布式向量检索方案高效和成本可控。
-* **检索效率和延迟：** 每次用户查询都需要进行 LLM API 调用来完成检索判断环节。与毫秒级的向量数据库查询相比，这个环节的端到端延迟通常会显著更高。
-* **运行成本：** 检索环节对 LLM API 的依赖意味着更多的 API 调用次数，可能导致较高的运行成本，尤其是在高并发或大规模应用场景下。
-* **检索的全局视野限制：** 如果文档摘要列表需要分批发送给 LLM 进行判断，LLM 在处理某个批次时无法同时看到所有其他批次的摘要。这可能影响最终选出片段的**全局最优性**，即可能错过在其他批次中得分更高但未被比较的摘要。
-* **LLM 评分一致性：** 在多次 LLM 调用和处理不同批次数据时，让 LLM 保持完全一致、稳定的相关性评分标准是一个挑战，可能需要精心的提示词工程和潜在的后处理。
+* **Scalability Challenge for Massive Datasets:** When dealing with very large document collections (where the total size of the summary list far exceeds the LLM's single-call processing capacity), performing retrieval judgment via multiple LLM calls is generally not as efficient or cost-effective as highly optimized, distributed vector retrieval solutions.
+* **Retrieval Efficiency and Latency:** Every user query requires an LLM API call to complete the retrieval judgment step. Compared to millisecond-level vector database queries, the end-to-end latency for this step is typically significantly higher.
+* **Running Cost:** The dependency on the LLM API for the retrieval phase means a higher number of API calls, potentially leading to increased running costs, especially in high-concurrency or large-scale applications.
+* **Limited Global View for Retrieval:** If the document summary list needs to be sent to the LLM in batches for judgment, the LLM cannot see all other batch summaries simultaneously when processing a specific batch. This may affect the **global optimality** of the selected snippets, potentially missing a higher-scoring summary from another batch that was not compared.
+* **LLM Scoring Consistency:** Maintaining completely consistent, stable relevance scoring by the LLM across multiple calls and different batches of data is a challenge, which may require careful prompt engineering and potential post-processing.
 
-本项目更适合以下场景：
+This project is best suited for the following scenarios:
 
-* **文档集规模适中**（摘要列表总长度可以舒适地放入 LLM 单次处理的上下文窗口，或者分少量批次即可处理完毕）。
-* 希望**大幅简化技术栈**，明确避免引入和管理独立的向量数据库服务。
-* 对**端到端延迟要求不极致**，愿意接受为了避免向量数据库而产生的额外检索延迟。
-* 作为**研究和探索** LLM 在 RAG 流程中直接执行检索判断的可行性与效果。
+* **Document sets are moderate in size** (the total length of the summary list can comfortably fit within the LLM's single-call context window, or be processed with only a few batches).
+* The desire to **significantly simplify the tech stack**, specifically avoiding the introduction and management of a separate vector database service.
+* **End-to-end latency requirements are not extreme**, and the user is willing to accept additional retrieval latency to avoid a vector database.
+* As a **research and exploration** of the feasibility and effectiveness of having an LLM directly perform retrieval judgment within the RAG process.
 
-## 🛠️ 技术栈 (Technology Stack)
+## 🛠️ Technology Stack
 
-* **Python:** 项目的主要开发语言。
-* **大型语言模型 API:** 支持与 OpenAI API 或其他兼容 OpenAI API 接口的 LLM 服务进行交互（例如，一些国内大模型或通过 LangChain 等框架集成的模型）。
-* **轻量级存储:** 使用 JSON 文件或其他轻量级方式持久化存储文档分块内容、摘要及它们之间的映射关系，**无需外部数据库服务**。
+* **Python:** The main development language for the project.
+* **Large Language Model API:** Supports interaction with the OpenAI API or other LLM services compatible with the OpenAI API interface (e.g., some domestic Chinese LLMs or models integrated via frameworks like LangChain).
+* **Lightweight Storage:** Uses JSON files or other lightweight methods to persistently store the document chunk content, summaries, and their mapping relationships, **eliminating the need for an external database service**.
