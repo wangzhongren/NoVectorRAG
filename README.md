@@ -1,6 +1,6 @@
 # [NoVectorRAG]
 
-[![License](https://img.shields.io/badge/License-GPL_v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) 一个独特的检索增强生成 (RAG) 系统，它完全**不依赖传统的向量数据库或关键词索引**进行信息检索，而是贯穿使用大型语言模型 (LLM) 来实现智能分块和直接的相关性判断。
+一个独特的检索增强生成 (RAG) 系统，它完全**不依赖传统的向量数据库或关键词索引**进行信息检索，而是贯穿使用大型语言模型 (LLM) 来实现智能分块和直接的相关性判断。
 
 # 🎉 LLM-Native RAG: 告别向量数据库，探索基于大模型驱动检索的新型 RAG 方案
 
